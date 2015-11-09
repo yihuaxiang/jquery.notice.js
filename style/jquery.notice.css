@@ -94,7 +94,7 @@ body.notice-active{
     text-align: center;
 }
 
-#noticeAlert,#noticeInfo,#noticeQuestion{
+#noticeAlert,#noticeInfo,#noticeQuestion,#noticePromp{
     display:inline-block;
     margin:10px auto;
     width:80px;
@@ -149,3 +149,19 @@ body.notice-active{
     width: 10px;
 }
 
+
+#noticePromp:before{
+    content: "?";
+    /* position: absolute; */
+    top: 6%;
+    left: 50%;
+    font-size: 70px;
+    border-radius: 3px;
+    height: 60%;
+    -webkit-transform: translateX(-50%);
+    width: 10px;
+    /* background: black; */
+}
+#noticePromp:after{
+
+}

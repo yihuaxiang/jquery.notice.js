@@ -107,6 +107,20 @@
 
             }else if(options.type == "question"){
                 $dom.find("#jQueryNoticeTitle").html("<div id='noticeQuestion'></div>");
+            }else if(options.type == "promp"){
+                $dom.find("#jQueryNoticeTitle").html("<div id='noticePromp'></div>");
+                $dom.find("#jQueryNoticeContent").html(options.content);
+
+                if(options.sure == true){
+                    $dom.find("#jQueryNoticeFooter").append("<button class='sure'>"+options.sureText+"</button>");
+                    var _this = this;
+                    $dom.on("click","button.sure",function(){
+                        options.sureFunction(_this);
+                    })
+                }
+                if(options.cancel == true){
+                    $dom.find("#jQueryNoticeFooter").append("<button class='cancel'>"+options.cancelText+"</button>")
+                }
             }
 
             return $dom;
@@ -118,6 +132,8 @@
                 showCancel:false,
                 cancelText:"cancel",
                 content:"null",
+                cancel:true,
+                cancelText:"cancel",
                 sure:true,
                 sureFunction:function(thisObj){
                     thisObj.destroy();
@@ -148,6 +164,31 @@
                 },
                 sureText:"sure"
             }
+
+            options=$.extend(defaults,options);
+
+            this.init();
+
+            var $infoDom=this.getDom(options);
+            $infoDom.find("")
+
+            $body.append($infoDom);
+            $infoDom.siblings().addClass("notice-blur");
+        },
+        promp:function(options){
+            var defaults={
+                type:"promp",
+                Cancel:true,
+                cancelText:"cancel",
+                content:"<imput type='text' name='' />",
+                sure:true,
+                sureFunction:function(thisObj){
+                    console.log($("#jQueryNoticeDiv").find("input").val());
+                    thisObj.destroy();
+                },
+                sureText:"sure"
+            };
+
 
             options=$.extend(defaults,options);
 
