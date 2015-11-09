@@ -180,7 +180,7 @@
                 type:"promp",
                 Cancel:true,
                 cancelText:"cancel",
-                content:"<imput type='text' name='' />",
+                content:"<input type='text' name='' />",
                 sure:true,
                 sureFunction:function(thisObj){
                     console.log($("#jQueryNoticeDiv").find("input").val());

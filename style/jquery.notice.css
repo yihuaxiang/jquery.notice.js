@@ -165,3 +165,13 @@ body.notice-active{
 #noticePromp:after{
 
 }
+#jQueryNoticeContent input{
+    padding: 10px;
+    font-size: 18px;
+    display: inline-block;
+    color: black;
+    text-indent: 40px;
+    border-radius: px;
+    width: 71%;
+    border-radius: 5px;
+}
