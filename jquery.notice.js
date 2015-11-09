@@ -1,47 +1,5 @@
 ;(function($,window,undefined){
 
-    String.prototype.toInt=function(){
-        var string=this.toString();
-        if(string.length == 0){
-            return 0;
-        }else{
-            var length=string.length;
-            var negtive=false;
-            if(string.indexOf("-") == 0){
-                negtive=true;
-                string=string.substr(1);
-                length -= 1;
-            }else{
-
-            }
-
-            var end=0;
-            var stringArr=string.split("");
-            for(var i=0;i<length;i++){
-                if(isNaN(Number(stringArr[i]))){
-                    end=i;
-                    break;
-                }else{
-                    continue;
-                }
-            }
-
-            if(end == 0){
-                return 0;
-            }else{
-
-                var num=string.substr(0,end);
-
-                if(negtive==false){
-                    return Number(num);
-                }else{
-                    return Number("-"+num);
-                }
-
-            }
-        }
-    }
-
     function chooseOne(one,base,type){
         if(type == "gt"){
             return one > base ? one : base;
@@ -56,6 +14,20 @@
     var $html=$("html");
     var $window=$(window);
 
+    var baseJson={
+        type:"alert",
+        showCancel:false,
+        cancelText:"取消",
+        sure:true,
+        sureText:"确定",
+        sureFunction:function(thisObj){
+            thisObj.destroy();
+        },
+        content:"test"
+    };
+
+
+
     $.notice={
         init:function(){
             $html.addClass("notice-active");
@@ -69,137 +41,108 @@
 
             $("#jQueryNoticeDiv").siblings().removeClass("notice-blur");
             $("#jQueryNoticeDiv").remove();
+            $window.unbind("keydown",this.triggerSure);
+            $window.unbind("keydown",this.triggerCancel);
 
 
         },
+        triggerSure:function(event){
+            console.log(event.keyCode);
+            if(event.keyCode == 13){
+                $("#jQueryNoticeDiv button.sure").click();
+                console.log("trigger click sure");
+            }else{
+                console.log("did not trigger click sure");
+            }
+            //$("#jQueryNoticeDiv button.sure").trigger("click");
+        },
+        triggerCancel:function(event){
+            if(event.keyCode == 27){
+                $("#jQueryNoticeDiv button.cancel").trigger("click");
+            }else{
+                console.log("did not trigger click cancel");
+            }
+        },  
         getDom:function(options){
             var $dom=$("<div id='jQueryNoticeDiv'><div id='jQueryNoticeTitle'></div><div id='jQueryNoticeContent'></div><div id='jQueryNoticeFooter'></div></div>");
 
 
             if(options.type == "alert"){
                 $dom.find("#jQueryNoticeTitle").html("<div id='noticeAlert'></div>");
-                $dom.find("#jQueryNoticeContent").html(options.content);
-                if(options.sure == true){
-                    $dom.find("#jQueryNoticeFooter").append("<button class='sure'>"+options.sureText+"</button>");
-                    var _this = this;
-                    $dom.on("click","button.sure",function(){
-                        options.sureFunction(_this);
-                    })
-                }
-                if(options.cancel == true){
-                    $dom.find("#jQueryNoticeFooter").append("<button class='cancel'>"+options.cancelText+"</button>")
-                }
             }else if(options.type == "info"){
                 $dom.find("#jQueryNoticeTitle").html("<div id='noticeInfo'></div>");
-                $dom.find("#jQueryNoticeContent").html(options.content);
-
-                if(options.sure == true){
-                    $dom.find("#jQueryNoticeFooter").append("<button class='sure'>"+options.sureText+"</button>");
-                    var _this = this;
-                    $dom.on("click","button.sure",function(){
-                        options.sureFunction(_this);
-                    })
-                }
-                if(options.cancel == true){
-                    $dom.find("#jQueryNoticeFooter").append("<button class='cancel'>"+options.cancelText+"</button>")
-                }
-
-
             }else if(options.type == "question"){
                 $dom.find("#jQueryNoticeTitle").html("<div id='noticeQuestion'></div>");
             }else if(options.type == "promp"){
                 $dom.find("#jQueryNoticeTitle").html("<div id='noticePromp'></div>");
-                $dom.find("#jQueryNoticeContent").html(options.content);
+            }
 
-                if(options.sure == true){
-                    $dom.find("#jQueryNoticeFooter").append("<button class='sure'>"+options.sureText+"</button>");
-                    var _this = this;
-                    $dom.on("click","button.sure",function(){
-                        options.sureFunction(_this);
-                    })
-                }
-                if(options.cancel == true){
-                    $dom.find("#jQueryNoticeFooter").append("<button class='cancel'>"+options.cancelText+"</button>")
-                }
+
+            $dom.find("#jQueryNoticeContent").html(options.content);
+            if(options.sure == true){
+                $dom.find("#jQueryNoticeFooter").append("<button class='sure'>"+options.sureText+"</button>");
+                var _this = this;
+                $dom.find("button.sure").click(function(){
+                    options.sureFunction(_this);
+                })
+                $window.keydown(this.triggerSure);
+            }
+            if(options.cancel == true){
+                $dom.find("#jQueryNoticeFooter").append("<button class='cancel'>"+options.cancelText+"</button>");
+                var _this=this;
+                $dom.find("button.cancel").click(function(){
+                    if(options.cancelFunction){
+                        options.cancelFunction(_this);
+                    }
+                })
+                $window.keydown(this.triggerCancel);
             }
 
             return $dom;
         },
+        default(options){
+            this.init();
+
+            var $dom=this.getDom(options);
+
+            $body.append($dom);
+            $dom.siblings().addClass("notice-blur");
+
+        },
         alert:function(options){
 
-            var defaults={
-                type:"alert",
-                showCancel:false,
-                cancelText:"cancel",
-                content:"null",
-                cancel:true,
-                cancelText:"cancel",
-                sure:true,
-                sureFunction:function(thisObj){
-                    thisObj.destroy();
-                },
-                sureText:"sure"
-            }
+            var defaults=$.extend(true,{},baseJson,{
+                type:"alert"
+            });
 
             options=$.extend(defaults,options);
 
-            this.init();
-
-            var $alertDom=this.getDom(options);
-
-            $body.append($alertDom);
-            $alertDom.siblings().addClass("notice-blur");
+            this.default(options);
 
         },
         info:function(options){
-            var defaults={
+
+            var defaults=$.extend(true,{},baseJson,{
                 type:"info",
-                showCancel:false,
-                cancelText:"cancel",
-                content:"null",
-                cancel:true,
-                sure:true,
-                sureFunction:function(thisObj){
-                    thisObj.destroy();
-                },
-                sureText:"sure"
-            }
+            });
 
             options=$.extend(defaults,options);
 
-            this.init();
-
-            var $infoDom=this.getDom(options);
-            $infoDom.find("")
-
-            $body.append($infoDom);
-            $infoDom.siblings().addClass("notice-blur");
-        },
+            this.default(options);        },
         promp:function(options){
-            var defaults={
+
+            var defaults=$.extend(true,{},baseJson,{
                 type:"promp",
-                Cancel:true,
-                cancelText:"cancel",
-                content:"<input type='text' name='' />",
-                sure:true,
-                sureFunction:function(thisObj){
-                    console.log($("#jQueryNoticeDiv").find("input").val());
-                    thisObj.destroy();
-                },
-                sureText:"sure"
-            };
+                content:"<input type='text' />"
+            });
 
 
             options=$.extend(defaults,options);
 
-            this.init();
-
-            var $infoDom=this.getDom(options);
-            $infoDom.find("")
-
-            $body.append($infoDom);
-            $infoDom.siblings().addClass("notice-blur");
+            this.default(options);
         }
     }
+
+
 
 })(jQuery,window)

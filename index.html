@@ -4,6 +4,7 @@
         <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.js"></script>
         <title>test</title>
         <link rel="stylesheet" href="./style/jquery.notice.css">
+        <meta content="text/html;charset=utf-8" />
         <style>
             body{           
                 padding:0px;
@@ -19,9 +20,28 @@
         <div id="main">
             <h1>this is main div</h1>
             <h2>this is second div</h2>
+            <button id="alert">alert</button>
+            <button id="info">info</button>
+            <button id="promp">promp</button>
         </div>
         <script src="./jquery.notice.js"></script>
         <script>
+            $("#alert").click(function(){
+                $.notice.alert({
+                    sure:true,
+                    sureText:"确认参加",
+                    cancel:true,
+                    cancelText:"拒绝参加"
+                });
+            })
+
+            $("#info").click(function(){
+                $.notice.info();
+            })
+
+            $("#promp").click(function(){
+                $.notice.promp();
+            })
         </script>
     </body>
 </html>
